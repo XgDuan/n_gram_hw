@@ -74,15 +74,15 @@ class HMM(object):
             fig1.gca().cla()
             sns.heatmap(np.log(100000 * self.B + 1), ax=fig1.gca(), cbar=False)
             plt.pause(0.001)
-            plt.savefig('b30.png')
+            fig1.savefig('b30.png')
             fig2.gca().cla()
             sns.heatmap(self.A, ax=fig2.gca(), cbar=False)
             plt.pause(0.001)
-            plt.savefig('a30.png')
+            fig2.savefig('a30.png')
             fig3.gca().plot(self.pi, label=step)
             fig3.gca().legend(loc='upper left', fontsize='xx-small')
             plt.pause(0.001)
-            plt.savefig('pi30.png')
+            fig3.savefig('pi30.png')
             
             result_prob = []
             # test
@@ -98,7 +98,7 @@ class HMM(object):
                 fig4.gca().text(idx, result, '%.2f'%result, ha='center', va='bottom', fontsize=10)
 
             plt.pause(0.001)
-            plt.savefig('perplexity30.png')
+            fig4.savefig('perplexity30.png')
             self._optimize(corpus)
 
     def _optimize(self, corpus):
@@ -184,17 +184,17 @@ if __name__ == '__main__':
     # training
     logger = get_logger('hmm')
     datas = DataLoader('../datas/train/', logger)
-    inference_data = DataLoader('../datas/test', logger, word2id=datas.word2id)
-    hmm = HMM(30, datas.vocab_size, 33025)
-    hmm.optimize(datas.seq_list, inference_data.seq_list, 50)
+    # inference_data = DataLoader('../datas/test', logger, word2id=datas.word2id)
+    # hmm = HMM(30, datas.vocab_size, 33025)
+    # hmm.optimize(datas.seq_list, inference_data.seq_list, 50)
 
-    pickle.dump({'model': hmm, 'word2id': datas.word2id}, open('model30.pkl', 'wb'))
+    # pickle.dump({'model': hmm, 'word2id': datas.word2id}, open('model30.pkl', 'wb'))
     
     # inference only
     dt = pickle.load(open('model30.pkl', 'rb'))
     hmm = dt['model']
     word2id = dt['word2id']
-    inference_data = DataLoader('../datas/valid', logger, word2id=word2id)
+    inference_data = DataLoader('../datas/test', logger, word2id=word2id)
     result_prob = dict()
     for seq in inference_data.seq_list:
         result_prob[' '.join(inference_data.rtranslate(seq))] = hmm.sequence_perplexity(seq)
